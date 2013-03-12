@@ -3,7 +3,9 @@
     "title": "jQuery Vortex",
     "description": "A jQuery plugin which displays HTML elements elliptically, optionally rotating them.",
     "keywords": [
-        "animation"
+        "animation",
+        "arrange",
+        "organize"
     ],
     "version": "1.0.1",
     "author": {
