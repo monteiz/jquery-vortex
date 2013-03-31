@@ -4,6 +4,7 @@
     "description": "A jQuery plugin which displays HTML elements elliptically, optionally rotating them.",
     "keywords": [
         "animation",
+        "rotation",
         "arrange",
         "organize"
     ],
