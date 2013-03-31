@@ -1,3 +1,6 @@
+/*! jQuery Vortex 1.0.2 | by Luca Fagioli - Montezuma Interactive | http://www.apache.org/licenses/LICENSE-2.0
+ */
+
 (function($) {
 	var Vortex = function(element, options) {
 		var kids;
@@ -7,6 +10,9 @@
 		var positions = [];
 		var kidsPositionIndexes = [];
 		var vortexInstance = this;
+		var stepCounter = -1;
+		var initialPositions = [];
+		var reset = false;
 
 		var children = [];
 
@@ -15,10 +21,9 @@
 			clockwise : true,
 			manualAdvance : false,
 			beforeAnimation : null,
-			afterAnimation : null
+			afterAnimation : null,
+			easing : 'end',
 		}, options || {});
-
-		var positionsCount = vortex.width() * 2;
 
 		var vortexHalfHeight = vortex.height() / 2;
 		var vortexHalfWidth = vortex.width() / 2;
@@ -31,6 +36,10 @@
 		};
 
 		kids = vortex.children().css("position", "absolute");
+
+		var positionsCount = kids.length * 4;
+
+		var stepLength = 1;
 
 		kids.each(function(i) {
 
@@ -65,7 +74,7 @@
 					}
 
 					var positionIndex = i
-							* Math.ceil(positionsCount / kids.length);
+							* Math.round(positionsCount / kids.length);
 
 					kidsPositionIndexes[i] = positionIndex;
 
@@ -73,6 +82,8 @@
 						top : kidPositions[positionIndex].top,
 						left : kidPositions[positionIndex].left
 					});
+
+					initialPositions[i] = positionIndex;
 
 					positions.push(kidPositions);
 
@@ -121,6 +132,23 @@
 
 		};
 
+		this.isAnimating = function() {
+
+			return isAnimating;
+
+		};
+
+		this.reset = function() {
+
+			if (kidsPositionIndexes[0] == initialPositions[0])
+				return;
+
+			reset = true;
+
+			this.start();
+
+		};
+
 		this.start = function(repetitions) {
 
 			this.stop();
@@ -130,56 +158,78 @@
 			var positionStep;
 
 			if (settings.clockwise === true) {
-				positionStep = -1;
+				positionStep = -stepLength;
 			} else {
-				positionStep = 1;
+				positionStep = stepLength;
 			}
 
-			var startAnimation = function() {
+			var startAnimation = function(kid, kidIndex) {
 
-				kids.each(function(i) {
+				var kidPositions = positions[kidIndex];
 
-					var kidPositions = positions[i];
+				var positionIndex = (kidsPositionIndexes[kidIndex] + positionStep);
 
-					var positionIndex = kidsPositionIndexes[i] + positionStep;
+				if (positionIndex < 0)
+					positionIndex = positionsCount - Math.abs(positionStep);
 
-					if (positionIndex < 0)
-						positionIndex = positionsCount - 1;
+				if (positionIndex > positionsCount - 1)
+					positionIndex = 0;
 
-					if (positionIndex > positionsCount - 1)
-						positionIndex = 0;
+				kid
+						.animate(
+								{
+									"left" : kidPositions[positionIndex].left,
+									"top" : kidPositions[positionIndex].top
+								},
+								settings.speed,
+								"linear",
+								function() {
+									
+									kidsPositionIndexes[kidIndex] = positionIndex;
+									
+									if (kidIndex == kids.length - 1) {
 
-					$(this).css({
-						"left" : kidPositions[positionIndex].left,
-						"top" : kidPositions[positionIndex].top
-					});
+										stepCounter--;
 
-					kidsPositionIndexes[i] = positionIndex;
+									}
 
-				});
+									if (vortexInstance.isAnimating()) {
+
+										if (reset == false
+												|| initialPositions[kidIndex] != positionIndex) {
+
+											if (stepCounter == 0) {
+
+												vortexInstance.stop();
+												stepCounter = -1;
+												return;
+
+											}
+
+											startAnimation(kid, kidIndex);
+
+										} else {
+
+											if (kidIndex == kids.length - 1) {
+
+												vortexInstance.stop();
+												reset = false;
+
+											}
+
+										}
+
+									}
+
+								});
+
+				
 
 			};
-			
-			function setIntervalX(callback, delay, repetitions) {
-			    var x = 0;
-			    animationIntervalId = window.setInterval(function () {
 
-			       callback();
-
-			       if (++x === repetitions) {
-			           window.clearInterval(animationIntervalId);
-			           vortexInstance.stop();
-			       }
-			    }, delay);
-			};
-
-			if (repetitions) {
-				setIntervalX(startAnimation, settings.speed, Math.floor(positionsCount / kids.length * repetitions));
-			} else {
-				animationIntervalId = setInterval(startAnimation, settings.speed);
-			}
-			
-			
+			kids.each(function(i) {
+				startAnimation($(this), i);
+			});
 
 		};
 
@@ -199,8 +249,9 @@
 
 		this.step = function(steps) {
 
-			this.start(steps);
-			
+			stepCounter = (steps * positionsCount / kids.length);
+			this.start();
+
 			return;
 
 		};
