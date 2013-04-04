@@ -8,11 +8,7 @@
         "arrange",
         "organize"
     ],
-<<<<<<< HEAD
     "version": "1.0.3",
-=======
-    "version": "1.0.2",
->>>>>>> 1cf9e4828e1a1e9954917bf23f96ad8e3c1f460d
     "author": {
         "name": "Luca Fagioli",
         "url": "http://blog.montezuma.it"
