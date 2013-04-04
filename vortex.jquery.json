@@ -1,0 +1,37 @@
+{
+    "name": "vortex",
+    "title": "jQuery Vortex",
+    "description": "A jQuery plugin which displays HTML elements elliptically, optionally rotating them.",
+    "keywords": [
+        "animation",
+        "rotation",
+        "arrange",
+        "organize"
+    ],
+<<<<<<< HEAD
+    "version": "1.0.3",
+=======
+    "version": "1.0.2",
+>>>>>>> 1cf9e4828e1a1e9954917bf23f96ad8e3c1f460d
+    "author": {
+        "name": "Luca Fagioli",
+        "url": "http://blog.montezuma.it"
+    },
+    "maintainers": [
+        {
+            "name": "Luca Fagioli",
+            "email": "info@montezuma.it",
+            "url": "http://www.montezuma.it"
+        }
+    ],
+    "licenses": [
+        {
+            "type": "Apache-2.0",
+            "url": "http://opensource.org/licenses/Apache-2.0"
+        }
+    ],
+    "homepage": "http://vortex.montezuma.it",
+    "dependencies": {
+        "jquery": ">=1.5"
+    }
+}
